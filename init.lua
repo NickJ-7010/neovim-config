@@ -21,17 +21,53 @@ local configs = {
             flavor = "accent"
         }
     },
-    cmp = function()
-
-    end,
+    snacks = {
+        dashboard = { enabled = true }
+    },
+    treesitter = {
+        indent = { enable = true },
+        highlight = { enable = true },
+        folds = { enable = true },
+        ensure_installed = {
+            "bash",
+            "c",
+            "diff",
+            "html",
+            "javascript",
+            "jsdoc",
+            "json",
+            "jsonc",
+            "lua",
+            "luadoc",
+            "luap",
+            "markdown",
+            "markdown_inline",
+            "printf",
+            "python",
+            "query",
+            "regex",
+            "toml",
+            "tsx",
+            "typescript",
+            "vim",
+            "vimdoc",
+            "xml",
+            "yaml"
+        }
+    }
 }
 
 require("lazy").setup({
     { "Mofiqul/vscode.nvim", lazy = false, priority = 1000, opts = {} },
     { "vyfor/cord.nvim", build = ':Cord update', lazy = false, opts = configs.cord },
-    { "nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate" },
-    { "pmizio/typescript-tools.nvim", dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" }, opts = {} },
-    { "hrsh7th/nvim-cmp", event = "InsertEnter", dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer" }, config = configs.cmp }
+    { "nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate", opts = configs.treesitter },
+    { "pmizio/typescript-tools.nvim", event = "BufEnter", dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" }, opts = {} },
+    { "hrsh7th/nvim-cmp", event = "InsertEnter", dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer" }, opts = {} },
+    {'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
+    { 'nvim-lualine/lualine.nvim', dependencies = { 'nvim-tree/nvim-web-devicons' }, opts = {} },
+    { "folke/snacks.nvim", priority = 999, lazy = false, opts = configs.snacks },
+    { 'nvim-mini/mini.pairs', version = '*', opts = {} },
+    { 'nvim-telescope/telescope.nvim', tag = '0.1.8', dependencies = { 'nvim-lua/plenary.nvim' }, opts = {} }
 })
 
 require("typescript-tools").setup({})
