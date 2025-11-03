@@ -22,7 +22,13 @@ local configs = {
         }
     },
     snacks = {
-        dashboard = { enabled = true }
+        dashboard = { enabled = true },
+        indent = {
+            enabled = true,
+            char = "│",
+            only_scope = false, -- only show indent guides of the scope
+            only_current = false, -- only show indent guides in the current window
+        }
     },
     treesitter = {
         indent = { enable = true },
@@ -32,7 +38,9 @@ local configs = {
             "bash",
             "c",
             "diff",
+            "help",
             "html",
+            "java",
             "javascript",
             "jsdoc",
             "json",
@@ -57,7 +65,18 @@ local configs = {
     },
     oil = {
         default_file_explorer = false
-    }
+    },
+    blink = {
+        keymap = { preset = 'super-tab' },
+        appearance = {
+            nerd_font_variant = 'mono'
+        },
+        completion = { documentation = { auto_show = true } },
+        sources = {
+            default = { 'lsp', 'path', 'snippets', 'buffer' },
+        },
+        fuzzy = { implementation = "prefer_rust_with_warning" }
+    },
 }
 
 require("lazy").setup({
@@ -65,24 +84,20 @@ require("lazy").setup({
     { "vyfor/cord.nvim", build = ':Cord update', lazy = false, opts = configs.cord },
     { "nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate", opts = configs.treesitter },
     { "pmizio/typescript-tools.nvim", event = "BufEnter", dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" }, opts = {} },
-    { "hrsh7th/nvim-cmp", event = "InsertEnter", dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer" }, opts = {} },
-    {'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
+    { 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
     { 'nvim-lualine/lualine.nvim', dependencies = { 'nvim-tree/nvim-web-devicons' }, opts = {} },
     { "folke/snacks.nvim", priority = 999, lazy = false, opts = configs.snacks },
     { 'nvim-mini/mini.pairs', version = '*', opts = {} },
     { 'nvim-telescope/telescope.nvim', tag = '0.1.8', dependencies = { 'nvim-lua/plenary.nvim' }, opts = {} },
     { "nvim-tree/nvim-tree.lua", version = "*", dependencies = { "nvim-tree/nvim-web-devicons" }, opts = {} },
-    { "ThePrimeagen/harpoon", dependencies = { 'nvim-lua/plenary.nvim' }, opts = {} },
-    { 'stevearc/oil.nvim', dependencies = { "nvim-tree/nvim-web-devicons" }, opts = configs.oil }
+    { "ThePrimeagen/harpoon", branch = "harpoon2", dependencies = { 'nvim-lua/plenary.nvim' }, opts = {} },
+    { 'stevearc/oil.nvim', dependencies = { "nvim-tree/nvim-web-devicons" }, opts = configs.oil },
+    { "saghen/blink.cmp", dependencies = { 'rafamadriz/friendly-snippets' }, version = '1.*', opts = configs.blink, opts_extend = { "sources.default" } },
+    { "mason-org/mason.nvim", opts = {} },
+    { "mason-org/mason-lspconfig.nvim", dependencies = { "mason-org/mason.nvim", "neovim/nvim-lspconfig" }, opts = {} },
 })
 
 require("typescript-tools").setup({})
-
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
-vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
 
 vim.cmd.colorscheme "vscode"
 
@@ -95,13 +110,25 @@ vim.opt.cursorline = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 vim.opt.wrap = false
+vim.opt.incsearch = true
+vim.opt.scrolloff = 8
+vim.opt.signcolumn = "yes"
+vim.opt.winborder = "rounded"
 
-local harpoon = require("harpoon.ui");
-vim.keymap.set('n', 'ha', require("harpoon.mark").add_file, { desc = 'Harpoon mark file' })
-vim.keymap.set('n', 'hm', harpoon.toggle_quick_menu, { desc = 'Harpoon open menu' })
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+
+local harpoon = require("harpoon")
+vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+vim.keymap.set("n", "<C-h>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end)
+vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end)
+vim.keymap.set("n", "<leader>3", function() harpoon:list():select(3) end)
+vim.keymap.set("n", "<leader>4", function() harpoon:list():select(4) end)
 
 local telescope = require('telescope.builtin')
 vim.keymap.set('n', '<leader>ff', telescope.find_files, { desc = 'Telescope find files' })
