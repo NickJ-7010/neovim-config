@@ -71,7 +71,13 @@ local configs = {
         appearance = {
             nerd_font_variant = 'mono'
         },
-        completion = { documentation = { auto_show = true } },
+        completion = {
+            documentation = {
+                auto_show = true,
+                window = { border = "solid" }
+            },
+            menu = { border = "none" }
+        },
         sources = {
             default = { 'lsp', 'path', 'snippets', 'buffer' },
         },
@@ -118,6 +124,12 @@ vim.opt.incsearch = true
 vim.opt.scrolloff = 8
 vim.opt.signcolumn = "yes"
 vim.opt.winborder = "rounded"
+
+vim.keymap.set("n", "<leader>lg", function() Snacks.lazygit() end)
+
+vim.keymap.set("x", "<leader>p", [["_dP]])
+vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
+vim.keymap.set("n", "<leader>Y", [["+Y]])
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
