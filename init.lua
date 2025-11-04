@@ -83,16 +83,24 @@ local configs = {
         },
         fuzzy = { implementation = "prefer_rust_with_warning" }
     },
+    lualine = {
+        sections = {
+		    lualine_c = {
+			    'lsp_progress'
+		    }
+	    }
+    },
 }
 
 require("lazy").setup({
-    { "Mofiqul/vscode.nvim", lazy = false, priority = 1000, opts = {} },
+    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
     { "vyfor/cord.nvim", build = ':Cord update', lazy = false, opts = configs.cord },
     { "nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate", opts = configs.treesitter },
     { "pmizio/typescript-tools.nvim", event = "BufEnter", dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" }, opts = {} },
     { 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
-    { 'nvim-lualine/lualine.nvim', dependencies = { 'nvim-tree/nvim-web-devicons' }, opts = {} },
+    { 'nvim-lualine/lualine.nvim', dependencies = { 'nvim-tree/nvim-web-devicons' }, opts = configs.lualine },
     { "folke/snacks.nvim", priority = 999, lazy = false, opts = configs.snacks },
+    { 'arkav/lualine-lsp-progress', opts = {} },
     { 'nvim-mini/mini.pairs', version = '*', opts = {} },
     { 'nvim-telescope/telescope.nvim', tag = '0.1.8', dependencies = { 'nvim-lua/plenary.nvim' }, opts = {} },
     { "nvim-tree/nvim-tree.lua", version = "*", dependencies = { "nvim-tree/nvim-web-devicons" }, opts = {} },
@@ -105,9 +113,7 @@ require("lazy").setup({
 
 require("typescript-tools").setup({})
 
-vim.cmd.colorscheme "vscode"
-
-vim.o.background = 'dark'
+vim.cmd.colorscheme "catppuccin"
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
