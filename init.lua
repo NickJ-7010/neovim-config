@@ -131,6 +131,8 @@ vim.opt.scrolloff = 8
 vim.opt.signcolumn = "yes"
 vim.opt.winborder = "rounded"
 
+vim.keymap.set("n", "cl", ":noh<CR>")
+
 vim.keymap.set("n", "<leader>lg", function() Snacks.lazygit() end)
 
 vim.keymap.set("x", "<leader>p", [["_dP]])
