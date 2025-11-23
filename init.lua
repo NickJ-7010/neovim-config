@@ -32,12 +32,16 @@ local configs = {
     },
     treesitter = {
         indent = { enable = true },
-        highlight = { enable = true },
+        highlight = {
+            enable = true,
+            additional_vim_regex_highlighting = false
+        },
         folds = { enable = true },
         ensure_installed = {
             "bash",
             "c",
             "diff",
+            "go",
             "help",
             "html",
             "java",
@@ -74,9 +78,9 @@ local configs = {
         completion = {
             documentation = {
                 auto_show = true,
-                window = { border = "solid" }
+                window = { border = "rounded" }
             },
-            menu = { border = "none" }
+            menu = { border = "rounded" }
         },
         sources = {
             default = { 'lsp', 'path', 'snippets', 'buffer' },
@@ -90,10 +94,17 @@ local configs = {
 		    }
 	    }
     },
+    catppuccin = {
+        transparent_background = true,
+        float = {
+            transparent = true,
+            solid = true
+        },
+    },
 }
 
 require("lazy").setup({
-    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+    { "catppuccin/nvim", name = "catppuccin", priority = 1000, opts = configs.catppuccin },
     { "vyfor/cord.nvim", build = ':Cord update', lazy = false, opts = configs.cord },
     { "nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate", opts = configs.treesitter },
     { "pmizio/typescript-tools.nvim", event = "BufEnter", dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" }, opts = {} },
@@ -109,6 +120,10 @@ require("lazy").setup({
     { "saghen/blink.cmp", dependencies = { 'rafamadriz/friendly-snippets' }, version = '1.*', opts = configs.blink, opts_extend = { "sources.default" } },
     { "mason-org/mason.nvim", opts = {} },
     { "mason-org/mason-lspconfig.nvim", dependencies = { "mason-org/mason.nvim", "neovim/nvim-lspconfig" }, opts = {} },
+}, {
+	ui = {
+        border = "rounded"
+    }
 })
 
 require("typescript-tools").setup({})
@@ -149,7 +164,7 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 local harpoon = require("harpoon")
 vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
-vim.keymap.set("n", "<C-h>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+vim.keymap.set("n", "<leader>h", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end)
 vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end)
 vim.keymap.set("n", "<leader>3", function() harpoon:list():select(3) end)
