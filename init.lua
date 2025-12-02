@@ -11,6 +11,14 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+local config_dir = vim.fn.stdpath('config')
+vim.fn.system({
+    "git",
+    "-C",
+    config_dir,
+    "pull"
+})
+
 local configs = {
     cord = {
         editor = {
