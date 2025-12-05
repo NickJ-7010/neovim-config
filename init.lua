@@ -122,7 +122,6 @@ require("lazy").setup({
     { 'arkav/lualine-lsp-progress', opts = {} },
     { 'nvim-mini/mini.pairs', version = '*', opts = {} },
     { 'nvim-telescope/telescope.nvim', tag = '0.1.8', dependencies = { 'nvim-lua/plenary.nvim' }, opts = {} },
-    { "nvim-tree/nvim-tree.lua", version = "*", dependencies = { "nvim-tree/nvim-web-devicons" }, opts = {} },
     { "ThePrimeagen/harpoon", branch = "harpoon2", dependencies = { 'nvim-lua/plenary.nvim' }, opts = {} },
     { 'stevearc/oil.nvim', dependencies = { "nvim-tree/nvim-web-devicons" }, opts = configs.oil },
     { "saghen/blink.cmp", dependencies = { 'rafamadriz/friendly-snippets' }, version = '1.*', opts = configs.blink, opts_extend = { "sources.default" } },
@@ -156,8 +155,6 @@ vim.opt.winborder = "rounded"
 
 vim.keymap.set("n", "cl", ":noh<CR>")
 
-vim.keymap.set("n", "<leader>lg", function() Snacks.lazygit() end)
-
 vim.keymap.set("x", "<leader>p", [["_dP]])
 vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
 vim.keymap.set("n", "<leader>Y", [["+Y]])
@@ -169,6 +166,10 @@ vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
 vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
 vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
+
+vim.keymap.set("n", "<leader>o", ":Oil<CR>")
+
+vim.keymap.set("n", "<leader>lg", function() Snacks.lazygit() end)
 
 local harpoon = require("harpoon")
 vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
@@ -183,41 +184,5 @@ vim.keymap.set('n', '<leader>ff', telescope.find_files, { desc = 'Telescope find
 vim.keymap.set('n', '<leader>fg', telescope.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', '<leader>fb', telescope.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', telescope.help_tags, { desc = 'Telescope help tags' })
+vim.keymap.set('n', '<leader>fd', telescope.diagnostics, { desc = 'Telescope diagnostics' })
 
-local function open_nvim_tree(data)
-
-  -- buffer is a directory
-  local directory = vim.fn.isdirectory(data.file) == 1
-
-  if not directory then
-    return
-  end
-
-  -- change to the directory
-  vim.cmd.cd(data.file)
-
-  -- open the tree
-  require("nvim-tree.api").tree.open()
-end
-
-vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
-
-local function open_nvim_tree(data)
-
-  -- buffer is a directory
-  local directory = vim.fn.isdirectory(data.file) == 1
-
-  if not directory then
-    return
-  end
-
-  -- change to the directory
-  vim.cmd.cd(data.file)
-
-  -- open the tree
-  require("nvim-tree.api").tree.open()
-end
-
-vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
-
--- vim.diagnostic.disable()
