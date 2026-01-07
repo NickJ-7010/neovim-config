@@ -153,7 +153,7 @@ vim.opt.scrolloff = 8
 vim.opt.signcolumn = "yes"
 vim.opt.winborder = "rounded"
 
-vim.keymap.set("n", "cl", ":noh<CR>")
+vim.keymap.set("n", "cl", "<cmd>noh<CR>")
 
 vim.keymap.set("x", "<leader>p", [["_dP]])
 vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
@@ -168,8 +168,9 @@ vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 vim.keymap.set("n", "<leader>bf", function () vim.lsp.buf.format() end)
+vim.keymap.set("n", "<leader>qq", "<cmd>qa<CR>")
 
-vim.keymap.set("n", "<leader>o", ":Oil<CR>")
+vim.keymap.set("n", "<leader>o", "<cmd>Oil<CR>")
 
 vim.keymap.set("n", "<leader>lg", function() Snacks.lazygit() end)
 
