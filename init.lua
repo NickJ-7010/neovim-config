@@ -76,7 +76,8 @@ local configs = {
         }
     },
     oil = {
-        default_file_explorer = false
+        default_file_explorer = true,
+        view_options = { show_hidden = true }
     },
     blink = {
         keymap = { preset = 'super-tab' },
@@ -111,6 +112,41 @@ local configs = {
     },
 }
 
+local keys = {
+    trouble = {
+        {
+            "<leader>xx",
+            "<cmd>Trouble diagnostics toggle<cr>",
+            desc = "Diagnostics (Trouble)",
+        },
+        {
+            "<leader>xX",
+            "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+            desc = "Buffer Diagnostics (Trouble)",
+        },
+        {
+            "<leader>cs",
+            "<cmd>Trouble symbols toggle focus=false<cr>",
+            desc = "Symbols (Trouble)",
+        },
+        {
+            "<leader>cl",
+            "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
+            desc = "LSP Definitions / references / ... (Trouble)",
+        },
+        {
+            "<leader>xL",
+            "<cmd>Trouble loclist toggle<cr>",
+            desc = "Location List (Trouble)",
+        },
+        {
+            "<leader>xQ",
+            "<cmd>Trouble qflist toggle<cr>",
+            desc = "Quickfix List (Trouble)",
+        },
+    }
+}
+
 require("lazy").setup({
     { "catppuccin/nvim", name = "catppuccin", priority = 1000, opts = configs.catppuccin },
     { "vyfor/cord.nvim", build = ':Cord update', lazy = false, opts = configs.cord },
@@ -127,6 +163,7 @@ require("lazy").setup({
     { "saghen/blink.cmp", dependencies = { 'rafamadriz/friendly-snippets' }, version = '1.*', opts = configs.blink, opts_extend = { "sources.default" } },
     { "mason-org/mason.nvim", opts = {} },
     { "mason-org/mason-lspconfig.nvim", dependencies = { "mason-org/mason.nvim", "neovim/nvim-lspconfig" }, opts = {} },
+    { "folke/trouble.nvim", opts = {}, cmd = "Trouble", keys = keys.trouble }
 }, {
 	ui = {
         border = "rounded"
@@ -181,6 +218,12 @@ vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end)
 vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end)
 vim.keymap.set("n", "<leader>3", function() harpoon:list():select(3) end)
 vim.keymap.set("n", "<leader>4", function() harpoon:list():select(4) end)
+vim.keymap.set("n", "<leader>5", function() harpoon:list():select(5) end)
+vim.keymap.set("n", "<leader>6", function() harpoon:list():select(6) end)
+vim.keymap.set("n", "<leader>7", function() harpoon:list():select(7) end)
+vim.keymap.set("n", "<leader>8", function() harpoon:list():select(8) end)
+vim.keymap.set("n", "<leader>9", function() harpoon:list():select(9) end)
+vim.keymap.set("n", "<leader>0", function() harpoon:list():select(10) end)
 
 local telescope = require('telescope.builtin')
 vim.keymap.set('n', '<leader>ff', telescope.find_files, { desc = 'Telescope find files' })
