@@ -36,7 +36,26 @@ local configs = {
             char = "│",
             only_scope = false, -- only show indent guides of the scope
             only_current = false, -- only show indent guides in the current window
-        }
+        },
+        image = { enable = true },
+        picker = {
+            toggles = {
+                hidden = false,
+                ignored = false
+            },
+            sources = {
+                files = {
+                    hidden = true,
+                    ignored =  true,
+                    transform = function()
+                        return item
+                    end
+                }
+            },
+            layout = {
+                preset = "telescope"
+            }
+        },
     },
     treesitter = {
         indent = { enable = true },
@@ -45,9 +64,11 @@ local configs = {
             additional_vim_regex_highlighting = false
         },
         folds = { enable = true },
+        auto_install = true,
         ensure_installed = {
             "bash",
             "c",
+            "css",
             "diff",
             "go",
             "help",
@@ -57,6 +78,7 @@ local configs = {
             "jsdoc",
             "json",
             "jsonc",
+            "latex",
             "lua",
             "luadoc",
             "luap",
@@ -66,11 +88,15 @@ local configs = {
             "python",
             "query",
             "regex",
+            "scss",
+            "svelte",
             "toml",
             "tsx",
             "typescript",
+            "typst",
             "vim",
             "vimdoc",
+            "vue",
             "xml",
             "yaml"
         }
@@ -103,13 +129,13 @@ local configs = {
 		    }
 	    }
     },
-    catppuccin = {
-        transparent_background = true,
-        float = {
-            transparent = true,
-            solid = true
-        },
-    },
+    theme = {
+        transparent = true,
+        styles = {
+            sidebars = "transparent",
+            floats = "transparent",
+        }
+    }
 }
 
 local keys = {
@@ -144,35 +170,95 @@ local keys = {
             "<cmd>Trouble qflist toggle<cr>",
             desc = "Quickfix List (Trouble)",
         },
-    }
+    },
+    neotest = function()
+        require("neotest").setup({
+            adapters = {
+                require("neotest-java")({
+                    -- Optional configuration here
+                }),
+            },
+        })
+    end,
 }
 
 require("lazy").setup({
-    { "catppuccin/nvim", name = "catppuccin", priority = 1000, opts = configs.catppuccin },
+    { "folke/tokyonight.nvim", priority = 1000, opts = configs.theme },
     { "vyfor/cord.nvim", build = ':Cord update', lazy = false, opts = configs.cord },
-    { "nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate", opts = configs.treesitter },
+    { "nvim-treesitter/nvim-treesitter", lazy = false, build = ":TSUpdate", opts = configs.treesitter },
     { "pmizio/typescript-tools.nvim", event = "BufEnter", dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" }, opts = {} },
     { 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
     { 'nvim-lualine/lualine.nvim', dependencies = { 'nvim-tree/nvim-web-devicons' }, opts = configs.lualine },
     { "folke/snacks.nvim", priority = 999, lazy = false, opts = configs.snacks },
     { 'arkav/lualine-lsp-progress', opts = {} },
     { 'nvim-mini/mini.pairs', version = '*', opts = {} },
-    { 'nvim-telescope/telescope.nvim', tag = '0.1.8', dependencies = { 'nvim-lua/plenary.nvim' }, opts = {} },
     { "ThePrimeagen/harpoon", branch = "harpoon2", dependencies = { 'nvim-lua/plenary.nvim' }, opts = {} },
     { 'stevearc/oil.nvim', dependencies = { "nvim-tree/nvim-web-devicons" }, opts = configs.oil },
     { "saghen/blink.cmp", dependencies = { 'rafamadriz/friendly-snippets' }, version = '1.*', opts = configs.blink, opts_extend = { "sources.default" } },
     { "mason-org/mason.nvim", opts = {} },
-    { "mason-org/mason-lspconfig.nvim", dependencies = { "mason-org/mason.nvim", "neovim/nvim-lspconfig" }, opts = {} },
-    { "folke/trouble.nvim", opts = {}, cmd = "Trouble", keys = keys.trouble }
+    { "mason-org/mason-lspconfig.nvim", dependencies = { "mason-org/mason.nvim", "neovim/nvim-lspconfig" }, opts = { } },
+    { "folke/trouble.nvim", opts = {}, cmd = "Trouble", keys = keys.trouble },
+    { "mrcjkb/rustaceanvim" },
+    { "lervag/vimtex", lazy = false },
+    { 'nvim-java/nvim-java', config = function() require('java').setup(); vim.lsp.enable('jdtls') end },
+    { "rcasia/neotest-java", ft = "java" },
+    { "nvim-neotest/neotest", dependencies = { "nvim-neotest/nvim-nio", "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter" }, config = configs.neotest },
 }, {
 	ui = {
         border = "rounded"
     }
 })
 
+vim.g.vimtex_view_method = "skim"
+vim.g.vimtex_compiler_method = "latexmk"
+vim.g.vimtex_compiler_latexmk = {
+  aux_dir = '/tmp/vimtex_out',
+}
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "tex",
+  callback = function()
+    vim.cmd("VimtexCompile")
+  end,
+})
+
 require("typescript-tools").setup({})
 
-vim.cmd.colorscheme "catppuccin"
+local JDK_HOME = "/Library/Java/JavaVirtualMachines/liberica-jdk-25-full.jdk/Contents/Home"
+
+vim.env.JAVA_HOME = JDK_HOME
+vim.env.PATH = JDK_HOME .. "/bin:" .. vim.env.PATH
+
+require('java').setup({
+    jdk = {
+        auto_install = false
+    }
+})
+
+vim.lsp.config('jdtls', {
+    cmd_env = {
+        JAVA_HOME = JDK_HOME,
+        PATH = JDK_HOME .. "/bin:" .. vim.env.PATH
+    },
+    settings = {
+        java = {
+            configuration = {
+                runtimes = {
+                    {
+                        name = "JavaSE-25",
+                        path = JDK_HOME,
+                        default = true
+                    }
+                }
+            },
+            project = {
+                sourcePaths = { "src" }
+            }
+        }
+    }
+})
+
+vim.cmd.colorscheme "tokyonight-night"
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
@@ -225,10 +311,8 @@ vim.keymap.set("n", "<leader>8", function() harpoon:list():select(8) end)
 vim.keymap.set("n", "<leader>9", function() harpoon:list():select(9) end)
 vim.keymap.set("n", "<leader>0", function() harpoon:list():select(10) end)
 
-local telescope = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', telescope.find_files, { desc = 'Telescope find files' })
-vim.keymap.set('n', '<leader>fg', telescope.live_grep, { desc = 'Telescope live grep' })
-vim.keymap.set('n', '<leader>fb', telescope.buffers, { desc = 'Telescope buffers' })
-vim.keymap.set('n', '<leader>fh', telescope.help_tags, { desc = 'Telescope help tags' })
-vim.keymap.set('n', '<leader>fd', telescope.diagnostics, { desc = 'Telescope diagnostics' })
+vim.keymap.set('n', '<leader>ff', Snacks.picker.files, { desc = 'Snacks picker find files' })
+vim.keymap.set('n', '<leader>fg', Snacks.picker.grep, { desc = 'Snacks picker live grep' })
+vim.keymap.set('n', '<leader>fb', Snacks.picker.buffers, { desc = 'Snacks picker buffers' })
+vim.keymap.set('n', '<leader>fd', Snacks.picker.diagnostics, { desc = 'Snacks picker diagnostics' })
 
